@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
-API_BASE_URL = "http://localhost:8000"  # Replace with your FastAPI URL
+API_BASE_URL = "http://20.233.170.204:8000"  # Replace with your FastAPI URL
 BUILTOP_LOGO_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7gSQHO6a8dUjEOcYXbc7q-za2ZMlD03gkA&s"  # Replace with your actual logo URL
 YELLOW = "#FFD700"
 BLACK = "#000000"
@@ -29,9 +29,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-# Set up the FastAPI base URL
-API_BASE_URL = "http://127.0.0.1:8000"  # Replace with your FastAPI URL
 
 st.title("Contractors QA Chatbot")
 
@@ -85,31 +82,27 @@ if st.button("Match Contractors"):
         f"{API_BASE_URL}/session/{st.session_state.session_id}/match-contractors"
     )
     if response.status_code == 200:
-        # If the request is successful, show the matching contractors
-        matching_analysis = response.json().get('matching_analysis')
-        if matching_analysis:
-            # Extracting top matching contractors
-            top_contractors = matching_analysis.get("top_matching_contractors", [])
+        # Display top matching contractors
+        st.subheader("Top Matching Contractors")
+        for contractor in response.json()["matching_analysis"]["top_matching_contractors"]:
+            st.write(f"**Company Name:** {contractor['company_name']}")
+            st.write(f"**Reasoning:** {contractor['reasoning']}")
+            st.write("---")
 
-            # If there are contractors, create a DataFrame
-            if top_contractors:
-                contractors_data = []
-                for contractor in top_contractors:
-                    contractors_data.append({
-                        "Company Name": contractor["company_name"],
-                        "Reasoning": contractor["reasoning"]
-                    })
+    # Display project timeline
+        st.subheader("Estimated Project Timeline")
+        timeline = response.json()["matching_analysis"]["estimate_project_timeline"]
+        st.write(f"**Start Date:** {timeline['start_date']}")
+        st.write(f"**End Date:** {timeline['end_date']}")
 
-                # Convert to DataFrame
-                contractors_df = pd.DataFrame(contractors_data)
-
-                # Display the table using Streamlit's dataframe
-                st.subheader("Top Matching Contractors")
-                st.dataframe(contractors_df, width=3000)
-            else:
-                st.error("No contractors found in the matching analysis.")
-        else:
-            st.error("No matching analysis found.")
+        # Display risk assessment
+        st.subheader("Risk Assessment")
+        st.write("**Potential Risks:**")
+        for risk in response.json()["matching_analysis"]["risk_assessment"]["potential_risks"]:
+            st.write(f"- {risk}")
+        st.write("**Mitigation Strategies:**")
+        for strategy in response.json()["matching_analysis"]["risk_assessment"]["mitigation_strategies"]:
+            st.write(f"- {strategy}")
     else:
         st.error("Failed to match contractors. Please try again.")
 
