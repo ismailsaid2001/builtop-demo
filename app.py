@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
-API_BASE_URL = "http://20.233.170.204:8000"  # Replace with your FastAPI URL
+API_BASE_URL = "http://20.254.22.186:8000/docs:8000"  # Replace with your FastAPI URL
 BUILTOP_LOGO_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7gSQHO6a8dUjEOcYXbc7q-za2ZMlD03gkA&s"  # Replace with your actual logo URL
 YELLOW = "#FFD700"
 BLACK = "#000000"
